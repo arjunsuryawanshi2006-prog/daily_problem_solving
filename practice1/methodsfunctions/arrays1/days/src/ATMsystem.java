@@ -1,109 +1,135 @@
+//class ATMSystem {
+//    public static void main(String[] args) {
+//        // ✅ Create an Object (Instance)
+//        BankAccount myAccount = new BankAccount("Arjun", 2000, 1234);
+//
+//        // ✅ Use object methods
+//        if (myAccount.validatePin(1234)) {
+//            myAccount.deposit(500);
+//            System.out.println("Balance: " + myAccount.getBalance());
+//        }
+//    }
+//}
 import java.util.ArrayList;
 import java.util.Scanner;
 
+// ✅ CLASS 1: BankAccount (No 'public' modifier so it fits in this file)
+class BankAccount {
+    private String accountHolder;
+    private double balance; // ✅ lowercase
+    private int pin;        // ✅ lowercase
+    private ArrayList<String> transactions;
 
-public class ATMsystem {
-
-
-    static int correctPin = 1234;
-    static double balance = 2000;
-    static ArrayList<String> transactions = new ArrayList<>();
-    static Scanner in = new Scanner(System.in);
-
-    public static void main(String[] args) {
-
-        if (!login()) {
-            System.out.println("access denied");
-            return;
-        }
-        boolean running = true;
-
-        while (running) {
-            showMenu();
-            int choice = in.nextInt();
-
-            if (choice == 1) {
-                deposit();
-            } else if (choice == 2) {
-                withdrawal();
-            } else if (choice == 3) {
-                checkBalance();
-            } else if (choice == 4) {
-                showHistory();
-            } else if (choice == 5) {
-                running = false;
-                System.out.println("thank you for using atm");
-            } else {
-                System.out.println("invalid option");
-            }
-        }
-    }//login with 3 at\
-
-    public static boolean login() {
-        int attempts = 3;
-        while (attempts > 0) {
-            System.out.println("enter pin: ");
-            int pin = in.nextInt();
-
-            if (pin == correctPin) {
-                System.out.println("login sucessful");
-                return true;
-            } else {
-                System.out.println("wrong pin . Attempts left:" + attempts);
-            }
-        }
-        return false;
-
+    public BankAccount(String name, double initialBalance, int pin) {
+        this.accountHolder = name;
+        this.balance = initialBalance;
+        this.pin = pin;
+        this.transactions = new ArrayList<>();
     }
-    public static void showMenu(){
-        System.out.println("\n----ATM MEnu-----");
-        System.out.println("1.Deposite");
-        System.out.println("2.withdrawl");
-        System.out.println("3.Check Balance");
-        System.out.println("4.Transaction History");
-        System.out.println("5. exit");
-        System.out.println("choose option: ");
-    }
-    public static void deposit(){
-        System.out.println("enter the amount to deposite: ");
-        double amount=in.nextInt();
 
-        if (amount >0){
-            balance +=amount;
-            transactions.add("deposited= "+amount);
-            System.out.println("transactions= "+amount);
-        }else {
-            System.out.println("invalid amount");
+    // ✅ Added missing method
+    public boolean validatePin(int inputPin) {
+        return this.pin == inputPin;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount; // ✅ FIXED: Add amount, not balance
+            transactions.add("Deposited: $" + amount);
+            System.out.println("✅ Deposit Successful");
+        } else {
+            System.out.println("❌ Invalid Amount");
         }
     }
-    public static void withdrawal(){
-        System.out.println("enter amount to withdraw: ");
-        double amount =in.nextDouble();
 
-        if (amount <= 0){
-            System.out.println("invalid amount");
-        } else if (amount > balance) {
-            System.out.println("insufficient balance");
-        } else{
-               balance-=amount;
-               transactions.add("withdrawn: "+ amount);
-            System.out.println("withdrawal sucessful");
-            }
+    public boolean withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount; // ✅ FIXED: Subtract amount
+            transactions.add("Withdrawn: $" + amount); // ✅ FIXED: Message
+            System.out.println("✅ Withdrawal Successful");
+            return true;
+        } else {
+            System.out.println("❌ Insufficient Funds");
+            return false;
         }
-        public static void checkBalance(){
-            System.out.println("current balance: "+ balance);
     }
-    public static void showHistory(){
-        if (transactions.isEmpty()){
-            System.out.println("no transaction yet");
-        }else{
-            System.out.println("transaction history:");
-            for (String t :transactions){
+
+    public void showHistory() {
+        if (transactions.isEmpty()) {
+            System.out.println("📭 No transactions yet.");
+        } else {
+            for (String t : transactions) {
                 System.out.println(t);
             }
         }
     }
-
 }
 
+// ✅ CLASS 2: ATMSystem (Public, matches filename)
+public class ATMsystem {
+    static Scanner in = new Scanner(System.in);
 
+    public static void main(String[] args) {
+        BankAccount myAccount = new BankAccount("Arjun", 2000, 1234);
+
+        System.out.println("===== Welcome to Java Bank ATM =====");
+
+        int attempts = 3;
+        boolean loggedIn = false;
+
+        // ✅ LOGIN LOOP
+        while (attempts > 0) { // ✅ FIXED: > 0
+            System.out.print("Enter PIN: ");
+            int inputPin = in.nextInt();
+
+            if (myAccount.validatePin(inputPin)) {
+                loggedIn = true;
+                break;
+            } else {
+                attempts--;
+                System.out.println("❌ Wrong PIN. Attempts left: " + attempts);
+            }
+        }
+
+        if (!loggedIn) {
+            System.out.println("🔒 Account Locked. Exiting.");
+            return;
+        }
+
+        // ✅ MENU LOOP (Outside Login Loop)
+        boolean running = true;
+        while (running) {
+            System.out.println("\n===== ATM Menu =====");
+            System.out.println("1. Deposit");
+            System.out.println("2. Withdraw");
+            System.out.println("3. Check Balance");
+            System.out.println("4. Transaction History");
+            System.out.println("5. Exit");
+            System.out.print("Choose option: ");
+
+            int choice = in.nextInt();
+
+            if (choice == 1) {
+                System.out.print("Enter amount: ");
+                myAccount.deposit(in.nextDouble());
+            } else if (choice == 2) {
+                System.out.print("Enter amount: ");
+                myAccount.withdraw(in.nextDouble());
+            } else if (choice == 3) {
+                System.out.println("💰 Balance: $" + myAccount.getBalance());
+            } else if (choice == 4) {
+                myAccount.showHistory();
+            } else if (choice == 5) { // ✅ FIXED: Choice 5 for Exit
+                running = false;
+                System.out.println("👋 Thank you for using Java Bank.");
+            } else {
+                System.out.println("❌ Invalid Option");
+            }
+        }
+        in.close();
+    }
+}
