@@ -26,6 +26,14 @@ class BankAccount {
         this.pin = pin;
         this.transactions = new ArrayList<>();
     }
+    public void setBalance(double amount ){
+        if (balance >= 0){
+            this.balance=balance;
+        }else {
+            System.out.println("X error , balance can not be negative");
+        }
+
+    }
 
     // ✅ Added missing method
     public boolean validatePin(int inputPin) {
@@ -42,7 +50,7 @@ class BankAccount {
             transactions.add("Deposited: $" + amount);
             System.out.println("✅ Deposit Successful");
         } else {
-            System.out.println("❌ Invalid Amount");
+            System.out.println("❌ error deposite amount must be positive");
         }
     }
 
@@ -53,7 +61,7 @@ class BankAccount {
             System.out.println("✅ Withdrawal Successful");
             return true;
         } else {
-            System.out.println("❌ Insufficient Funds");
+            System.out.println("❌ valid amount or Insufficient Funds");
             return false;
         }
     }
