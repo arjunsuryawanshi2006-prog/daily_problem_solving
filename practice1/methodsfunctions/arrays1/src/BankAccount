@@ -1,0 +1,22 @@
+public class BankAccount{
+    String= accountholder;
+    double=balance;
+    int=accountnumber;
+
+public BankAccount(String name,double initialbalance);{
+      this.accountholder=name;
+      this.balance=initialbalance;
+      this.accountnumber=(int)(Math.random() *10000);
+}
+public double deposit(double amount){
+      if(amount <0){
+      balance+=amount;
+      System.out.println();
+
+      if
+
+
+
+
+
+}
